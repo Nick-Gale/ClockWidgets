@@ -54,7 +54,12 @@ def font(size, bold=False):
 
 
 def make_pill(glass, hair, fill, sheen, edge, frac):
-    """One pill at 3x supersampling, drawn like the platform renderers."""
+    """One pill at 3x supersampling, drawn like the platform renderers.
+
+    The fill completely fills the box (fillInsetRatio 0): the box shape
+    grows left→right with the hairline rim always on top, so a full
+    section reads as a filled glass cell, not a pill inside a pill.
+    """
     s = 3
     W, H = PILL_W * s, PILL_H * s
     r = RADIUS * s
@@ -63,21 +68,21 @@ def make_pill(glass, hair, fill, sheen, edge, frac):
     d = ImageDraw.Draw(im, "RGBA")
     box = [0, 0, W - 1, H - 1]
 
-    # glass body + hairline rim
-    d.rounded_rectangle(box, radius=r, fill=glass, outline=hair, width=1 * s)
+    # glass body
+    d.rounded_rectangle(box, radius=r, fill=glass)
 
-    # inset fill capsule (left-anchored, grows with frac)
+    # fill: same box geometry, growing left→right
     if frac > 0:
         inner_w = (W - 2 * inset) * min(frac, 1.0)
-        inner = [inset, inset, inset + max(inner_w, inset), H - inset]
-        ir = min((H - 2 * inset) // 2, inner_w / 2)
+        inner = [inset, inset, inset + max(inner_w, inset), H - 1 - inset]
+        ir = min(r, inner_w / 2)
         cd = ImageDraw.Draw(im, "RGBA")
         cd.rounded_rectangle(inner, radius=ir, fill=fill)
 
-        # sheen band on the fill capsule's top (alpha-composite, clipped)
-        band_h = int((H - 2 * inset) * SHAPE["sheenFraction"])
+        # sheen band on the fill's top (alpha-composite, clipped)
+        band_h = int((inner[3] - inner[1]) * SHAPE["sheenFraction"])
         band = Image.new("RGBA", (W, H), (0, 0, 0, 0))
-        ImageDraw.Draw(band).rectangle([0, 0, W, inset + band_h], fill=sheen)
+        ImageDraw.Draw(band).rectangle([0, 0, W, inner[1] + band_h], fill=sheen)
         clip = Image.new("L", (W, H), 0)
         ImageDraw.Draw(clip).rounded_rectangle(inner, radius=ir, fill=255)
         band.putalpha(ImageChops.multiply(band.split()[3], clip))
@@ -86,10 +91,15 @@ def make_pill(glass, hair, fill, sheen, edge, frac):
     # specular streak near the top inside every pill (glass cue)
     spec = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     sd = ImageDraw.Draw(spec)
-    sbox = [inset, inset, W - inset - 1, inset + (H - 2 * inset) // 3]
-    sd.rounded_rectangle(sbox, radius=(H - 2 * inset) // 3,
+    sp = max(1, r // 2)
+    sbox = [sp, sp, W - 1 - sp, sp + (H - 2 * sp) // 3]
+    sd.rounded_rectangle(sbox, radius=(sbox[3] - sbox[1]) / 2,
                          fill=(255, 255, 255, 22))
     im.paste(spec, (0, 0), spec)
+
+    # hairline rim last: the glass edge stays crisp over any fill
+    d = ImageDraw.Draw(im, "RGBA")
+    d.rounded_rectangle(box, radius=r, outline=hair, width=1 * s)
 
     im = im.resize((PILL_W, PILL_H), Image.LANCZOS)
     return im
