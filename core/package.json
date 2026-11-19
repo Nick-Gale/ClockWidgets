@@ -4,6 +4,6 @@
   "type": "module",
   "description": "Canonical Thirds time model: golden vectors + JS reference implementation.",
   "scripts": {
-    "test": "node --test test/"
+    "test": "node --test test/*.test.js"
   }
 }
