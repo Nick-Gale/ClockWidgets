@@ -1,0 +1,31 @@
+{
+  "format": "thirds-vectors/1",
+  "comment": "Hand-written from core/spec.md. Covers period bounds, midnight wrap, quarter steps, off-grid minutes.",
+  "vectors": [
+    { "t": "09:00", "period": "day",     "quarters": 0,  "fullSections": 0, "section": 0, "fill": 0.0 },
+    { "t": "09:14", "period": "day",     "quarters": 0,  "fullSections": 0, "section": 0, "fill": 0.0 },
+    { "t": "09:15", "period": "day",     "quarters": 1,  "fullSections": 0, "section": 0, "fill": 0.25 },
+    { "t": "09:45", "period": "day",     "quarters": 3,  "fullSections": 0, "section": 0, "fill": 0.75 },
+    { "t": "10:00", "period": "day",     "quarters": 4,  "fullSections": 1, "section": 1, "fill": 0.0 },
+    { "t": "12:07", "period": "day",     "quarters": 12, "fullSections": 3, "section": 3, "fill": 0.0 },
+    { "t": "12:45", "period": "day",     "quarters": 15, "fullSections": 3, "section": 3, "fill": 0.75 },
+    { "t": "13:00", "period": "day",     "quarters": 16, "fullSections": 4, "section": 4, "fill": 0.0 },
+    { "t": "16:45", "period": "day",     "quarters": 31, "fullSections": 7, "section": 7, "fill": 0.75 },
+    { "t": "16:59", "period": "day",     "quarters": 31, "fullSections": 7, "section": 7, "fill": 0.75 },
+
+    { "t": "17:00", "period": "evening", "quarters": 0,  "fullSections": 0, "section": 0, "fill": 0.0 },
+    { "t": "17:02", "period": "evening", "quarters": 0,  "fullSections": 0, "section": 0, "fill": 0.0 },
+    { "t": "17:15", "period": "evening", "quarters": 1,  "fullSections": 0, "section": 0, "fill": 0.25 },
+    { "t": "20:30", "period": "evening", "quarters": 14, "fullSections": 3, "section": 3, "fill": 0.5 },
+    { "t": "23:59", "period": "evening", "quarters": 27, "fullSections": 6, "section": 6, "fill": 0.75 },
+    { "t": "00:00", "period": "evening", "quarters": 28, "fullSections": 7, "section": 7, "fill": 0.0 },
+    { "t": "00:45", "period": "evening", "quarters": 31, "fullSections": 7, "section": 7, "fill": 0.75 },
+    { "t": "00:59", "period": "evening", "quarters": 31, "fullSections": 7, "section": 7, "fill": 0.75 },
+
+    { "t": "01:00", "period": "night",   "quarters": 0,  "fullSections": 0, "section": 0, "fill": 0.0 },
+    { "t": "01:15", "period": "night",   "quarters": 1,  "fullSections": 0, "section": 0, "fill": 0.25 },
+    { "t": "04:30", "period": "night",   "quarters": 14, "fullSections": 3, "section": 3, "fill": 0.5 },
+    { "t": "08:00", "period": "night",   "quarters": 28, "fullSections": 7, "section": 7, "fill": 0.0 },
+    { "t": "08:45", "period": "night",   "quarters": 31, "fullSections": 7, "section": 7, "fill": 0.75 }
+  ]
+}
