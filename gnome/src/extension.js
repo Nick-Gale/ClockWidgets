@@ -33,6 +33,7 @@ class ThirdsBar {
       gap: Math.max(1, Math.round(pillW * sh.gapRatio)),
       radius: Math.round(PILL_H * sh.cornerRatio),
       inset: Math.round(PILL_H * sh.fillInsetRatio),
+      fillRadius: Math.round(PILL_H * (1 - 2 * sh.fillInsetRatio) * sh.cornerRatio),
     };
     this.actor = new St.BoxLayout({
       name: 'thirds-bar',
@@ -83,19 +84,19 @@ class ThirdsBar {
         fill.style = 'width: 0px; min-width: 0px;';
         continue;
       }
-      // capsule-in-capsule: the fill is a rounded capsule anchored to the
-      // pill's left edge, with a soft vertical sheen (glass look).
-      const { pillW, pillH, radius, inset } = this._geo;
-      const innerMax = pillW - 2 * inset;
+      // The fill is the box shape itself, growing left→right: it fills the
+      // glass content area (inside the 1px hairline rim) with a soft
+      // vertical sheen. A full section reads as a filled glass cell.
+      const { pillW, pillH, radius, fillRadius } = this._geo;
+      const innerMax = pillW - 2; // St content box: minus the 1px border
       const w = Math.max(radius, Math.round(innerMax * frac));
       fill.style =
         `background-gradient-direction: vertical;` +
         ` background-gradient-start: ${pal.sheen};` +
         ` background-gradient-end: ${pal.fill};` +
-        ` border-radius: ${radius - inset}px;` +
-        ` margin-left: ${inset}px;` +
+        ` border-radius: ${Math.min(fillRadius, Math.floor(w / 2))}px;` +
         ` width: ${w}px; min-width: ${w}px;` +
-        ` height: ${pillH - 2 * inset}px; min-height: ${pillH - 2 * inset}px;`;
+        ` height: ${pillH - 2}px; min-height: ${pillH - 2}px;`;
     }
   }
 
