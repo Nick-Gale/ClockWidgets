@@ -15,18 +15,18 @@ object Palette {
         val fillInsetRatio: Double, val sheenFraction: Double,
     )
 
-    val SHAPE = Shape(1.25, 0.08, 0.3, 0.1, 0.42)
+    val SHAPE = Shape(1.25, 0.08, 0.3, 0.0, 0.42)
 
     val DARK = Scheme(
-        day = PeriodColors(fill = 0xFF5AB37A.toInt(), sheen = 0xFF6FC88F.toInt(), edge = 0xFF419465.toInt()),
-        evening = PeriodColors(fill = 0xFF588CC7.toInt(), sheen = 0xFF6C9FD9.toInt(), edge = 0xFF3F74AE.toInt()),
+        day = PeriodColors(fill = 0xFF97D179.toInt(), sheen = 0xFFA9DE8E.toInt(), edge = 0xFF6EA851.toInt()),
+        evening = PeriodColors(fill = 0xFF73B3D9.toInt(), sheen = 0xFF8AC4E6.toInt(), edge = 0xFF5393B8.toInt()),
         night = PeriodColors(fill = 0xFF956CC4.toInt(), sheen = 0xFFAA81D6.toInt(), edge = 0xFF744EAA.toInt()),
         glass = Glass(body = 0x24FFFFFF, hairline = 0x66FFFFFF),
     )
 
     val LIGHT = Scheme(
-        day = PeriodColors(fill = 0xFF4F9E72.toInt(), sheen = 0xFF63B886.toInt(), edge = 0xFF38875C.toInt()),
-        evening = PeriodColors(fill = 0xFF4B7DB5.toInt(), sheen = 0xFF6193C7.toInt(), edge = 0xFF38679C.toInt()),
+        day = PeriodColors(fill = 0xFF81B865.toInt(), sheen = 0xFF95C77B.toInt(), edge = 0xFF5E9443.toInt()),
+        evening = PeriodColors(fill = 0xFF619EC2.toInt(), sheen = 0xFF79B1D1.toInt(), edge = 0xFF4580A3.toInt()),
         night = PeriodColors(fill = 0xFF8360AF.toInt(), sheen = 0xFF9874C3.toInt(), edge = 0xFF664794.toInt()),
         glass = Glass(body = 0x1A000000, hairline = 0x4C000000),
     )

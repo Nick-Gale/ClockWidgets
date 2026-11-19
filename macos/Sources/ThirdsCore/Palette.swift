@@ -13,17 +13,17 @@ public struct Palette {
             aspect = a; gapRatio = g; cornerRatio = c; fillInsetRatio = i; sheenFraction = s } }
     public let day, evening, night: Period
     public let glass: Glass
-    public static let shape = Shape(1.25, 0.08, 0.3, 0.1, 0.42)
+    public static let shape = Shape(1.25, 0.08, 0.3, 0.0, 0.42)
 
     public static let dark = Palette(
-        day: Period(NSColor(srgbRed: 90/255, green: 179/255, blue: 122/255, alpha: 1.0), NSColor(srgbRed: 111/255, green: 200/255, blue: 143/255, alpha: 1.0), NSColor(srgbRed: 65/255, green: 148/255, blue: 101/255, alpha: 1.0)),
-        evening: Period(NSColor(srgbRed: 88/255, green: 140/255, blue: 199/255, alpha: 1.0), NSColor(srgbRed: 108/255, green: 159/255, blue: 217/255, alpha: 1.0), NSColor(srgbRed: 63/255, green: 116/255, blue: 174/255, alpha: 1.0)),
+        day: Period(NSColor(srgbRed: 151/255, green: 209/255, blue: 121/255, alpha: 1.0), NSColor(srgbRed: 169/255, green: 222/255, blue: 142/255, alpha: 1.0), NSColor(srgbRed: 110/255, green: 168/255, blue: 81/255, alpha: 1.0)),
+        evening: Period(NSColor(srgbRed: 115/255, green: 179/255, blue: 217/255, alpha: 1.0), NSColor(srgbRed: 138/255, green: 196/255, blue: 230/255, alpha: 1.0), NSColor(srgbRed: 83/255, green: 147/255, blue: 184/255, alpha: 1.0)),
         night: Period(NSColor(srgbRed: 149/255, green: 108/255, blue: 196/255, alpha: 1.0), NSColor(srgbRed: 170/255, green: 129/255, blue: 214/255, alpha: 1.0), NSColor(srgbRed: 116/255, green: 78/255, blue: 170/255, alpha: 1.0)),
         glass: Glass(NSColor(srgbRed: 255/255, green: 255/255, blue: 255/255, alpha: 0.14), NSColor(srgbRed: 255/255, green: 255/255, blue: 255/255, alpha: 0.4)))
 
     public static let light = Palette(
-        day: Period(NSColor(srgbRed: 79/255, green: 158/255, blue: 114/255, alpha: 1.0), NSColor(srgbRed: 99/255, green: 184/255, blue: 134/255, alpha: 1.0), NSColor(srgbRed: 56/255, green: 135/255, blue: 92/255, alpha: 1.0)),
-        evening: Period(NSColor(srgbRed: 75/255, green: 125/255, blue: 181/255, alpha: 1.0), NSColor(srgbRed: 97/255, green: 147/255, blue: 199/255, alpha: 1.0), NSColor(srgbRed: 56/255, green: 103/255, blue: 156/255, alpha: 1.0)),
+        day: Period(NSColor(srgbRed: 129/255, green: 184/255, blue: 101/255, alpha: 1.0), NSColor(srgbRed: 149/255, green: 199/255, blue: 123/255, alpha: 1.0), NSColor(srgbRed: 94/255, green: 148/255, blue: 67/255, alpha: 1.0)),
+        evening: Period(NSColor(srgbRed: 97/255, green: 158/255, blue: 194/255, alpha: 1.0), NSColor(srgbRed: 121/255, green: 177/255, blue: 209/255, alpha: 1.0), NSColor(srgbRed: 69/255, green: 128/255, blue: 163/255, alpha: 1.0)),
         night: Period(NSColor(srgbRed: 131/255, green: 96/255, blue: 175/255, alpha: 1.0), NSColor(srgbRed: 152/255, green: 116/255, blue: 195/255, alpha: 1.0), NSColor(srgbRed: 102/255, green: 71/255, blue: 148/255, alpha: 1.0)),
         glass: Glass(NSColor(srgbRed: 0/255, green: 0/255, blue: 0/255, alpha: 0.1), NSColor(srgbRed: 0/255, green: 0/255, blue: 0/255, alpha: 0.3)))
 
