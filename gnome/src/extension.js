@@ -6,6 +6,8 @@
 import St from 'gi://St';
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
+import Gio from 'gi://Gio';
+import Shell from 'gi://Shell';
 
 import { Extension } from 'resource:///org/gnome/shell/extensions/extension.js';
 import * as Main from 'resource:///org/gnome/shell/ui/main.js';
@@ -96,6 +98,34 @@ export default class ThirdsExtension extends Extension {
     this._source = null;
     this._tick();
     this._scheduleTick();
+    this._maybeDebugShot();
+  }
+
+  // Dev affordance: with THIRDS_DEBUG_SHOT=<png-path>, capture the stage
+  // from inside the shell once after unlock. Used by test-headless.sh to
+  // verify rendering without a real display session.
+  async _maybeDebugShot() {
+    const shotPath = GLib.getenv('THIRDS_DEBUG_SHOT');
+    if (!shotPath) return;
+    try {
+      if (Main.screenShield?.setLocked)
+        Main.screenShield.setLocked(false);
+      else if (Main.screenShield?.deactivate)
+        Main.screenShield.deactivate();
+      await new Promise(r => GLib.timeout_add(GLib.PRIORITY_DEFAULT, 3000, () => { r(); return GLib.SOURCE_REMOVE; }));
+      Gio._promisify(Shell.Screenshot.prototype, 'screenshot');
+      const shooter = new Shell.Screenshot();
+      const stream = Gio.MemoryOutputStream.new_resizable();
+      await shooter.screenshot(false, stream);
+      stream.close(null);
+      const out = Gio.File.new_for_path(shotPath)
+        .replace(null, false, Gio.FileCreateFlags.NONE, null);
+      out.write_bytes(stream.steal_as_bytes(), null);
+      out.close(null);
+      console.log(`THIRDS-DEBUG shot written: ${shotPath}`);
+    } catch (e) {
+      console.log(`THIRDS-DEBUG shot failed: ${e}`);
+    }
   }
 
   disable() {
