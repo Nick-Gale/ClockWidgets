@@ -10,6 +10,8 @@ enum Geo {
     static let gap: CGFloat = max(1, (pillW * Palette.shape.gapRatio).rounded())
     static let inset: CGFloat = (pillH * Palette.shape.fillInsetRatio).rounded()
     static let radius: CGFloat = pillH * Palette.shape.cornerRatio
+    // Fill shares the box's squareness: same cornerRatio on its own height.
+    static let fillRadius: CGFloat = (pillH - 2 * inset) * Palette.shape.cornerRatio
     static let barW: CGFloat = 8 * pillW + 7 * gap
     static let barH: CGFloat = 14
 }
@@ -37,29 +39,33 @@ func renderBar(state: ThirdsState, scheme: Palette) -> NSImage {
         let body = NSBezierPath(roundedRect: pill, xRadius: Geo.radius, yRadius: Geo.radius)
         scheme.glass.body.setFill()
         body.fill()
-        scheme.glass.hairline.setStroke()
-        body.lineWidth = 1
-        body.stroke()
 
+        // The fill is the box shape itself, growing left→right.
         let frac = fillFraction(i, state)
         if frac > 0 {
-            var inner = pill.insetBy(dx: Geo.inset, dy: Geo.inset)
+            var inner = pill
             inner.size.width *= frac
-            let r = min(Geo.radius - Geo.inset, inner.width / 2)
-            let fill = NSBezierPath(roundedRect: inner, xRadius: r, yRadius: r)
-            // Vertical sheen→fill gradient gives the capsule its glass depth.
+            let r = min(Geo.fillRadius, inner.width / 2)
+            let fillPath = NSBezierPath(roundedRect: inner, xRadius: r, yRadius: r)
+            // Vertical sheen→fill gradient gives the fill its glass depth.
             NSGradient(starting: period.sheen, ending: period.fill)?
-                .draw(in: fill, angle: -90)
+                .draw(in: fillPath, angle: -90)
         }
 
         // Specular streak across the top inside every pill (glass cue).
-        let specH = (Geo.pillH - 2 * Geo.inset) / 3
+        let sp = Geo.radius / 2
+        let specH = (Geo.pillH - 2 * sp) / 3
         let spec = NSBezierPath(
-            roundedRect: NSRect(x: pill.minX + Geo.inset, y: pill.maxY - Geo.inset - specH,
-                                width: pill.width - 2 * Geo.inset, height: specH),
+            roundedRect: NSRect(x: pill.minX + sp, y: pill.maxY - sp - specH,
+                                width: pill.width - 2 * sp, height: specH),
             xRadius: specH / 2, yRadius: specH / 2)
         NSColor(calibratedWhite: 1, alpha: 0.09).setFill()
         spec.fill()
+
+        // Hairline rim last: the glass edge stays crisp over any fill.
+        scheme.glass.hairline.setStroke()
+        body.lineWidth = 1
+        body.stroke()
     }
 
     image.unlockFocus()
