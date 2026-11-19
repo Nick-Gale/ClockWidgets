@@ -9,12 +9,12 @@
     android:padding="4dp">
 
     <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_weight="1" android:src="@drawable/glass_pill" android:scaleType="fitXY" />
-    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_weight="1" android:src="@drawable/fill_day" android:scaleType="fitXY" />
-    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="3dp" android:layout_weight="1" android:src="@drawable/fill_day" android:scaleType="fitXY" />
-    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="3dp" android:layout_weight="1" android:src="@drawable/fill_day" android:scaleType="fitXY" />
-    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="3dp" android:layout_weight="1" android:src="@drawable/fill_day" android:scaleType="fitXY" />
-    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="3dp" android:layout_weight="1" android:src="@drawable/glass_pill" android:scaleType="fitXY" />
-    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="3dp" android:layout_weight="1" android:src="@drawable/glass_pill" android:scaleType="fitXY" />
-    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="3dp" android:layout_weight="1" android:src="@drawable/glass_pill" android:scaleType="fitXY" />
+    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="2dp" android:layout_weight="1" android:src="@drawable/fill_day" android:scaleType="fitXY" />
+    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="2dp" android:layout_weight="1" android:src="@drawable/fill_day" android:scaleType="fitXY" />
+    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="2dp" android:layout_weight="1" android:src="@drawable/fill_day" android:scaleType="fitXY" />
+    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="2dp" android:layout_weight="1" android:src="@drawable/fill_day" android:scaleType="fitXY" />
+    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="2dp" android:layout_weight="1" android:src="@drawable/glass_pill" android:scaleType="fitXY" />
+    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="2dp" android:layout_weight="1" android:src="@drawable/glass_pill" android:scaleType="fitXY" />
+    <ImageView android:layout_width="0dp" android:layout_height="18dp" android:layout_marginStart="2dp" android:layout_weight="1" android:src="@drawable/glass_pill" android:scaleType="fitXY" />
 
 </LinearLayout>

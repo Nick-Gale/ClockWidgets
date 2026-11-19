@@ -5,16 +5,38 @@ import org.junit.Test
 
 class BarGeometryTest {
     @Test
-    fun eightEqualPillsFitInWidth() {
-        // 330dp at density 1: pad 4, gap 3 → 2*4 + 8*pillW + 7*3 = 330 → pillW ≈ 38
+    fun barScalesUniformlyAndCentres() {
+        // 330dp wide × 40dp tall at density 1: height-limited fit of the
+        // natural bar (192.6×18 dp) → scale ≈ 1.67.
         val g = BarRenderer.computeGeometry(330, 40, 1f)
         assertEquals(4, g.pad)
+        assertEquals(30, g.pillH)
+        assertEquals(38, g.pillW)
         assertEquals(3, g.gap)
-        assertEquals(18, g.pillH)
-        assertEquals(37, g.pillW) // (330 - 8 - 21)/8 = 37.6 → 37
-        val used = 2 * g.pad + 8 * g.pillW + 7 * g.gap
-        assertEquals(true, used <= 330)
-        assertEquals(true, used >= 330 - 8)
+        assertEquals(9, g.radius)   // cornerRatio 0.30 × pillH
+        assertEquals(3, g.inset)    // fillInsetRatio 0.10 × pillH
+        val barW = 8 * g.pillW + 7 * g.gap
+        assertEquals(325, barW)
+        assertEquals(2, g.offX)     // centred: 325 + 2*2 = 329 ≤ 330
+    }
+
+    @Test
+    fun pillAspectFollowsShapeToken() {
+        val sh = Palette.SHAPE
+        for (w in listOf(258, 330, 500, 834)) {
+            val g = BarRenderer.computeGeometry(w, 40, 2.75f)
+            val expectedW = g.pillH * sh.aspect
+            assertEquals(true, kotlin.math.abs(g.pillW - expectedW) <= 1.5f)
+        }
+    }
+
+    @Test
+    fun barNeverOverflowsWidth() {
+        for (w in listOf(120, 258, 330, 834)) {
+            val g = BarRenderer.computeGeometry(w, 40, 1f)
+            val used = 8 * g.pillW + 7 * g.gap + 2 * g.offX
+            assertEquals(true, used in (w - 2)..w)
+        }
     }
 
     @Test

@@ -4,14 +4,21 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.RectF
+import android.graphics.Shader
 import kotlin.math.min
 import kotlin.math.roundToInt
 
 /**
  * Draws the eight-pill bar for one exact widget-instance size. Geometry is
  * pure ints (unit-testable); rendering is the thin part.
+ *
+ * Shape comes from Palette.SHAPE (tokens.json): pills keep the shared
+ * aspect, gap and corner ratios, and the whole bar scales uniformly to fit
+ * the instance, centred horizontally. Wide widgets get a bigger bar, not
+ * stretched pills.
  */
 object BarRenderer {
 
@@ -22,17 +29,35 @@ object BarRenderer {
         val pillH: Int,
         val radius: Int,
         val inset: Int,
+        val offX: Int,
     )
 
-    /** Even width: 2*pad + 8*pillW + 7*gap == widthPx (± rounding). */
+    /** Uniform fit: 8*pillW + 7*gap == widthPx - 2*offX (± rounding). */
     fun computeGeometry(widthPx: Int, heightPx: Int, density: Float): Geometry {
-        fun dp(v: Int) = (v * density).roundToInt()
-        val pad = dp(4)
-        val gap = dp(3)
-        val pillH = dp(18)
-        val inset = dp(2)
-        val pillW = maxOf(dp(8), (widthPx - 2 * pad - 7 * gap) / 8)
-        return Geometry(pad, gap, pillW, min(pillH, heightPx), pillH / 2, inset)
+        val sh = Palette.SHAPE
+        val aspect = sh.aspect.toFloat()
+        val gapRatio = sh.gapRatio.toFloat()
+        val cornerRatio = sh.cornerRatio.toFloat()
+        val fillInsetRatio = sh.fillInsetRatio.toFloat()
+        fun dp(v: Float) = (v * density).roundToInt()
+        val pad = dp(4f)
+        val natH = 18f * density                       // base pill height (v1 scale)
+        val natPillW = natH * aspect
+        val natGap = natPillW * gapRatio
+        val natBarW = 8 * natPillW + 7 * natGap
+        val availW = (widthPx - 2 * pad).coerceAtLeast(1).toFloat()
+        val availH = (heightPx - 2 * pad).coerceAtLeast(1).toFloat()
+        val scale = min(availW / natBarW, availH / natH)
+        // nat* values are already in px (natH carries density), so the
+        // scaled results round straight to px — no dp() here.
+        val pillW = (natPillW * scale).roundToInt().coerceAtLeast(4)
+        val pillH = (natH * scale).roundToInt().coerceAtLeast(4)
+        val gap = (natGap * scale).roundToInt().coerceAtLeast(1)
+        val radius = (cornerRatio * pillH).roundToInt()   // ratios of px pillH
+        val inset = (fillInsetRatio * pillH).roundToInt()
+        val barW = 8 * pillW + 7 * gap
+        return Geometry(pad, gap, pillW, min(pillH, heightPx), radius, inset,
+            (widthPx - barW) / 2)
     }
 
     /** Fill fraction 0..1 for pill i given the time state. */
@@ -57,12 +82,11 @@ object BarRenderer {
         val bmp = Bitmap.createBitmap(widthPx, heightPx, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        val cy = heightPx / 2f
-        val top = cy - g.pillH / 2f
-        val bottom = cy + g.pillH / 2f
+        val top = (heightPx - g.pillH) / 2f
+        val bottom = top + g.pillH
 
         for (i in 0 until 8) {
-            val left = g.pad + i * (g.pillW + g.gap).toFloat()
+            val left = g.offX + i * (g.pillW + g.gap).toFloat()
             val right = left + g.pillW
             val pill = RectF(left, top, right, bottom)
 
@@ -82,9 +106,21 @@ object BarRenderer {
                     bottom - g.inset,
                 )
                 val r = min((g.radius - g.inset).toFloat(), inner.width() / 2f)
-                paint.color = period.fill
+                // Vertical sheen→fill gradient gives the capsule its glass depth.
+                paint.shader = LinearGradient(
+                    inner.left, inner.top, inner.left, inner.bottom,
+                    intArrayOf(period.sheen, period.fill), null, Shader.TileMode.CLAMP,
+                )
                 canvas.drawRoundRect(inner, r, r, paint)
+                paint.shader = null
             }
+
+            // Specular streak across the top inside every pill (glass cue).
+            paint.color = 0x16FFFFFF
+            val spec = RectF(left + g.inset, top + g.inset, right - g.inset,
+                top + g.inset + (g.pillH - 2 * g.inset) / 3f)
+            val sr = spec.height() / 2f
+            canvas.drawRoundRect(spec, sr, sr, paint)
         }
         return bmp
     }
