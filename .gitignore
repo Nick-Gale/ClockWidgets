@@ -1,0 +1,20 @@
+# Node
+node_modules/
+
+# Android / Gradle
+.gradle/
+build/
+*.apk
+local.properties
+.kotlin/
+
+# Swift / Xcode
+.build/
+*.xcframework
+DerivedData/
+
+# macOS bundles produced by build-app.sh
+macos/dist/
+
+# Python
+__pycache__/
