@@ -1,0 +1,8 @@
+{
+  "uuid": "thirds@ngale.dev",
+  "name": "Thirds",
+  "description": "Progress through the current third of the day: eight glass sections, no numbers. day 09–16 green · evening 17–00 blue · night 01–08 purple.",
+  "shell-version": ["50", "50.1"],
+  "url": "https://github.com/ngale/thirds",
+  "version": 1
+}
