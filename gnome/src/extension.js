@@ -87,7 +87,7 @@ class ThirdsBar {
   }
 }
 
-export class ThirdsExtension extends Extension {
+export default class ThirdsExtension extends Extension {
   enable() {
     this._tokens = this._loadTokens();
     this._bar = new ThirdsBar(this._tokens);
