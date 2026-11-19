@@ -1,12 +1,15 @@
 import AppKit
 import ThirdsCore
 
-// Geometry in points; menu bar content height is ~22, keep the bar compact.
+// Geometry in points, derived from the shared shape tokens. Menu bar
+// content height is ~14–22 pt, so the base pill stays small and the
+// ratios (aspect, gap, corner, inset) come from Palette.shape.
 enum Geo {
-    static let pillW: CGFloat = 16
     static let pillH: CGFloat = 12
-    static let gap: CGFloat = 2
-    static let inset: CGFloat = 1
+    static let pillW: CGFloat = (pillH * Palette.shape.aspect).rounded()
+    static let gap: CGFloat = max(1, (pillW * Palette.shape.gapRatio).rounded())
+    static let inset: CGFloat = (pillH * Palette.shape.fillInsetRatio).rounded()
+    static let radius: CGFloat = pillH * Palette.shape.cornerRatio
     static let barW: CGFloat = 8 * pillW + 7 * gap
     static let barH: CGFloat = 14
 }
@@ -31,7 +34,7 @@ func renderBar(state: ThirdsState, scheme: Palette) -> NSImage {
         let pill = NSRect(x: x, y: top, width: Geo.pillW, height: Geo.pillH)
 
         NSGraphicsContext.current?.shouldAntialias = true
-        let body = NSBezierPath(roundedRect: pill, xRadius: Geo.pillH / 2, yRadius: Geo.pillH / 2)
+        let body = NSBezierPath(roundedRect: pill, xRadius: Geo.radius, yRadius: Geo.radius)
         scheme.glass.body.setFill()
         body.fill()
         scheme.glass.hairline.setStroke()
@@ -42,11 +45,21 @@ func renderBar(state: ThirdsState, scheme: Palette) -> NSImage {
         if frac > 0 {
             var inner = pill.insetBy(dx: Geo.inset, dy: Geo.inset)
             inner.size.width *= frac
-            let r = min(Geo.pillH / 2 - Geo.inset, inner.width / 2)
+            let r = min(Geo.radius - Geo.inset, inner.width / 2)
             let fill = NSBezierPath(roundedRect: inner, xRadius: r, yRadius: r)
-            period.fill.setFill()
-            fill.fill()
+            // Vertical sheen→fill gradient gives the capsule its glass depth.
+            NSGradient(starting: period.sheen, ending: period.fill)?
+                .draw(in: fill, angle: -90)
         }
+
+        // Specular streak across the top inside every pill (glass cue).
+        let specH = (Geo.pillH - 2 * Geo.inset) / 3
+        let spec = NSBezierPath(
+            roundedRect: NSRect(x: pill.minX + Geo.inset, y: pill.maxY - Geo.inset - specH,
+                                width: pill.width - 2 * Geo.inset, height: specH),
+            xRadius: specH / 2, yRadius: specH / 2)
+        NSColor(calibratedWhite: 1, alpha: 0.09).setFill()
+        spec.fill()
     }
 
     image.unlockFocus()
