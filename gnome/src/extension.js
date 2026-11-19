@@ -18,18 +18,25 @@ import { thirdState } from './core.js';
 const APPEARANCE = 'dark';
 
 const SECTIONS = 8;
-const PILL_W = 30;
-const PILL_H = 18;
-const GAP = 4;
-const RADIUS = PILL_H / 2;
+const PILL_H = 18; // base pill height in device px (panel scale); the rest
+                   // of the geometry derives from tokens.json "shape".
 const QUARTER_SECONDS = 15 * 60;
 
 class ThirdsBar {
   constructor(tokens) {
     this._tokens = tokens;
+    const sh = tokens.shape;
+    const pillW = Math.round(PILL_H * sh.aspect);
+    this._geo = {
+      pillH: PILL_H,
+      pillW,
+      gap: Math.max(1, Math.round(pillW * sh.gapRatio)),
+      radius: Math.round(PILL_H * sh.cornerRatio),
+      inset: Math.round(PILL_H * sh.fillInsetRatio),
+    };
     this.actor = new St.BoxLayout({
       name: 'thirds-bar',
-      style: `spacing: ${GAP}px;`,
+      style: `spacing: ${this._geo.gap}px;`,
       y_align: Clutter.ActorAlign.CENTER,
       reactive: false,
       can_focus: false,
@@ -54,11 +61,17 @@ class ThirdsBar {
 
   _glassStyle() {
     const g = this._tokens.glass[APPEARANCE];
-    return `background-color: ${g.body}; border-color: ${g.hairline}; border-width: 1px; border-radius: ${RADIUS}px;`;
+    const { radius } = this._geo;
+    // A soft top-lit vertical gradient gives the empty glass depth.
+    return `background-color: ${g.body}; border-color: ${g.hairline}; border-width: 1px; border-radius: ${radius}px;` +
+      ' background-gradient-direction: vertical;' +
+      ' background-gradient-start: rgba(255,255,255,0.10);' +
+      ' background-gradient-end: rgba(255,255,255,0.02);';
   }
 
   _setGlassSize(w) {
-    w.style += ` width: ${PILL_W}px; min-width: ${PILL_W}px; height: ${PILL_H}px; min-height: ${PILL_H}px;`;
+    const { pillW, pillH } = this._geo;
+    w.style += ` width: ${pillW}px; min-width: ${pillW}px; height: ${pillH}px; min-height: ${pillH}px;`;
   }
 
   render(state) {
@@ -72,15 +85,17 @@ class ThirdsBar {
       }
       // capsule-in-capsule: the fill is a rounded capsule anchored to the
       // pill's left edge, with a soft vertical sheen (glass look).
-      const innerMax = PILL_W - 2;
-      const w = Math.max(6, Math.round(innerMax * frac));
+      const { pillW, pillH, radius, inset } = this._geo;
+      const innerMax = pillW - 2 * inset;
+      const w = Math.max(radius, Math.round(innerMax * frac));
       fill.style =
         `background-gradient-direction: vertical;` +
         ` background-gradient-start: ${pal.sheen};` +
         ` background-gradient-end: ${pal.fill};` +
-        ` border-radius: ${RADIUS - 1}px;` +
+        ` border-radius: ${radius - inset}px;` +
+        ` margin-left: ${inset}px;` +
         ` width: ${w}px; min-width: ${w}px;` +
-        ` height: ${PILL_H - 2}px; min-height: ${PILL_H - 2}px;`;
+        ` height: ${pillH - 2 * inset}px; min-height: ${pillH - 2 * inset}px;`;
     }
   }
 
