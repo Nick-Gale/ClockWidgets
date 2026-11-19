@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 5x1 default, horizontally resizable 4–12 cells, height pinned to one
+     row (docs/spec.md). updatePeriodMillis is a 30-min backstop; the
+     quarter-aligned refresh comes from AlarmManager (ThirdsWidgetReceiver). -->
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/widget_description"
+    android:maxResizeHeight="40dp"
+    android:maxResizeWidth="834dp"
+    android:minHeight="40dp"
+    android:minResizeHeight="40dp"
+    android:minResizeWidth="258dp"
+    android:minWidth="330dp"
+    android:previewLayout="@layout/thirds_bar_preview"
+    android:resizeMode="horizontal"
+    android:targetCellHeight="1"
+    android:targetCellWidth="5"
+    android:updatePeriodMillis="1800000"
+    android:widgetCategory="home_screen" />
