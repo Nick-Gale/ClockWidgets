@@ -14,7 +14,8 @@ class BarGeometryTest {
         assertEquals(38, g.pillW)
         assertEquals(3, g.gap)
         assertEquals(9, g.radius)   // cornerRatio 0.30 × pillH
-        assertEquals(3, g.inset)    // fillInsetRatio 0.10 × pillH
+        assertEquals(0, g.inset)    // fillInsetRatio 0: fill = box shape
+        assertEquals(9, g.fillRadius) // shares the box squareness
         val barW = 8 * g.pillW + 7 * g.gap
         assertEquals(325, barW)
         assertEquals(2, g.offX)     // centred: 325 + 2*2 = 329 ≤ 330

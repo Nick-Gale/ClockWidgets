@@ -28,6 +28,7 @@ object BarRenderer {
         val pillW: Int,
         val pillH: Int,
         val radius: Int,
+        val fillRadius: Int,
         val inset: Int,
         val offX: Int,
     )
@@ -55,8 +56,10 @@ object BarRenderer {
         val gap = (natGap * scale).roundToInt().coerceAtLeast(1)
         val radius = (cornerRatio * pillH).roundToInt()   // ratios of px pillH
         val inset = (fillInsetRatio * pillH).roundToInt()
+        // Fill shares the box's squareness: same cornerRatio on its own height.
+        val fillRadius = (cornerRatio * (pillH - 2 * inset)).roundToInt()
         val barW = 8 * pillW + 7 * gap
-        return Geometry(pad, gap, pillW, min(pillH, heightPx), radius, inset,
+        return Geometry(pad, gap, pillW, min(pillH, heightPx), radius, fillRadius, inset,
             (widthPx - barW) / 2)
     }
 
@@ -92,12 +95,9 @@ object BarRenderer {
 
             paint.color = scheme.glass.body
             canvas.drawRoundRect(pill, g.radius.toFloat(), g.radius.toFloat(), paint)
-            paint.style = Paint.Style.STROKE
-            paint.strokeWidth = (density).coerceAtLeast(1f)
-            paint.color = scheme.glass.hairline
-            canvas.drawRoundRect(pill, g.radius.toFloat(), g.radius.toFloat(), paint)
-            paint.style = Paint.Style.FILL
 
+            // The fill is the box shape itself, growing left→right
+            // (fillInsetRatio 0): a full section reads as a filled glass cell.
             val frac = fillFraction(i, state)
             if (frac > 0.0) {
                 val inner = RectF(
@@ -105,8 +105,8 @@ object BarRenderer {
                     left + g.inset + (g.pillW - 2 * g.inset) * frac.toFloat(),
                     bottom - g.inset,
                 )
-                val r = min((g.radius - g.inset).toFloat(), inner.width() / 2f)
-                // Vertical sheen→fill gradient gives the capsule its glass depth.
+                val r = min(g.fillRadius.toFloat(), inner.width() / 2f)
+                // Vertical sheen→fill gradient gives the fill its glass depth.
                 paint.shader = LinearGradient(
                     inner.left, inner.top, inner.left, inner.bottom,
                     intArrayOf(period.sheen, period.fill), null, Shader.TileMode.CLAMP,
@@ -117,10 +117,18 @@ object BarRenderer {
 
             // Specular streak across the top inside every pill (glass cue).
             paint.color = 0x16FFFFFF
-            val spec = RectF(left + g.inset, top + g.inset, right - g.inset,
-                top + g.inset + (g.pillH - 2 * g.inset) / 3f)
+            val sp = g.radius / 2
+            val spec = RectF(left + sp, top + sp, right - sp,
+                top + sp + (g.pillH - 2 * sp) / 3f)
             val sr = spec.height() / 2f
             canvas.drawRoundRect(spec, sr, sr, paint)
+
+            // Hairline rim last: the glass edge stays crisp over any fill.
+            paint.style = Paint.Style.STROKE
+            paint.strokeWidth = (density).coerceAtLeast(1f)
+            paint.color = scheme.glass.hairline
+            canvas.drawRoundRect(pill, g.radius.toFloat(), g.radius.toFloat(), paint)
+            paint.style = Paint.Style.FILL
         }
         return bmp
     }
