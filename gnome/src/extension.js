@@ -27,7 +27,7 @@ class ThirdsBar {
     this._tokens = tokens;
     this.actor = new St.BoxLayout({
       name: 'thirds-bar',
-      spacing: GAP,
+      style: `spacing: ${GAP}px;`,
       y_align: Clutter.ActorAlign.CENTER,
       reactive: false,
       can_focus: false,
